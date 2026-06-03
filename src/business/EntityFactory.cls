@@ -10,6 +10,7 @@
 
 USING Progress.Lang.*.
 USING business.CustomerEntity.
+USING business.ItemEntity.
 USING business.EntityFactory.
 
 BLOCK-LEVEL ON ERROR UNDO, THROW.
@@ -21,6 +22,7 @@ CLASS business.EntityFactory USE-WIDGET-POOL:
     
     /* Singleton instances of business entities */
     VAR PRIVATE CustomerEntity objCustomerEntityInstance.
+    VAR PRIVATE ItemEntity objItemEntityInstance.
     
     /*------------------------------------------------------------------------------
      Purpose: Private constructor to prevent direct instantiation
@@ -53,14 +55,28 @@ CLASS business.EntityFactory USE-WIDGET-POOL:
     END METHOD.
         
     /*------------------------------------------------------------------------------
+     Purpose: Get the singleton instance of ItemEntity
+     Notes:
+    ------------------------------------------------------------------------------*/
+    METHOD PUBLIC ItemEntity GetItemEntity():
+        IF objItemEntityInstance = ? THEN
+            objItemEntityInstance = NEW ItemEntity().
+        
+        RETURN objItemEntityInstance.
+    END METHOD.
+        
+    /*------------------------------------------------------------------------------
      Purpose: Reset all entity instances (for testing or cleanup)
      Notes:
     ------------------------------------------------------------------------------*/
     METHOD PUBLIC VOID ResetInstances():
         IF VALID-OBJECT(objCustomerEntityInstance) THEN
             DELETE OBJECT objCustomerEntityInstance.
-        
-        objCustomerEntityInstance = ?.    
+        objCustomerEntityInstance = ?.
+
+        IF VALID-OBJECT(objItemEntityInstance) THEN
+            DELETE OBJECT objItemEntityInstance.
+        objItemEntityInstance = ?.
     END METHOD.
     
 END CLASS.
