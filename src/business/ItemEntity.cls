@@ -17,6 +17,8 @@ CLASS business.ItemEntity INHERITS BusinessEntity:
 
     {business/ItemDataset.i}
 
+    DEFINE DATA-SOURCE srcItem FOR Item.
+
     /*------------------------------------------------------------------------------
      Purpose: Constructor - initializes the entity with dataset and data source
      Notes:
@@ -37,7 +39,8 @@ CLASS business.ItemEntity INHERITS BusinessEntity:
      Purpose: Retrieve an item by item number
      Notes:   Populates the ttItem temp-table with the found record
     ------------------------------------------------------------------------------*/
-    METHOD PUBLIC LOGICAL GetItemByNumber(INPUT ipiItemNum AS INTEGER):
+    METHOD PUBLIC LOGICAL GetItemByNumber(INPUT ipiItemNum AS INTEGER,
+                                           OUTPUT DATASET dsItem):
         DEFINE VARIABLE cFilter AS CHARACTER NO-UNDO.
 
         /* Build filter for item number */
@@ -47,7 +50,7 @@ CLASS business.ItemEntity INHERITS BusinessEntity:
         THIS-OBJECT:ReadData(cFilter).
 
         /* Check if item was found */
-        RETURN AVAILABLE ttItem.
+        RETURN CAN-FIND(FIRST ttItem).
     END METHOD.
 
     /*------------------------------------------------------------------------------
@@ -55,11 +58,12 @@ CLASS business.ItemEntity INHERITS BusinessEntity:
      Notes:   Checks business rules: price not zero, total value limit
     ------------------------------------------------------------------------------*/
     METHOD PUBLIC LOGICAL ValidateItem(
-        INPUT DATASET dsItem,
+        INPUT-OUTPUT DATASET dsItem,
         OUTPUT opcErrorMessage AS CHARACTER):
 
         DEFINE VARIABLE dTotalValue AS DECIMAL NO-UNDO.
 
+        FIND FIRST ttItem NO-ERROR.
         IF AVAILABLE ttItem THEN DO:
             /* Validate price is not zero */
             IF ttItem.Price = 0 THEN DO:
@@ -84,7 +88,7 @@ CLASS business.ItemEntity INHERITS BusinessEntity:
      Purpose: Update item data in database
      Notes:   Assumes data has been validated before calling
     ------------------------------------------------------------------------------*/
-    METHOD PUBLIC VOID UpdateItem(INPUT DATASET dsItem):
+    METHOD PUBLIC VOID UpdateItem(INPUT-OUTPUT DATASET dsItem):
         THIS-OBJECT:UpdateData(DATASET dsItem BY-REFERENCE).
     END METHOD.
 

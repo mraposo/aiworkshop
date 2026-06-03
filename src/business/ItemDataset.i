@@ -8,7 +8,7 @@
   Notes       : Include file used by ItemEntity class
 ----------------------------------------------------------------------*/
 
-DEFINE TEMP-TABLE ttItem NO-UNDO
+DEFINE TEMP-TABLE ttItem BEFORE-TABLE bttItem
     FIELD Itemnum       AS INTEGER
     FIELD ItemName      AS CHARACTER
     FIELD CatPage       AS INTEGER
@@ -27,5 +27,3 @@ DEFINE TEMP-TABLE ttItem NO-UNDO
 
 DEFINE DATASET dsItem
     FOR ttItem.
-
-DEFINE DATA-SOURCE srcItem FOR Item.
